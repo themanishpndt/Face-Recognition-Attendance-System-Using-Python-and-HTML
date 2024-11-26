@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+
+{% block title %}Recognition Result{% endblock %}
+
+{% block content %}
+    <h1 class="text-center">Recognition Result</h1>
+    <div class="text-center">
+        <h2>{{ result.name }}</h2>
+        <p>Status: {{ result.status }}</p>
+        <p>Date: {{ result.date }}</p>
+    </div>
+    <div class="text-center">
+        <a href="{{ url_for('show_attendance') }}" class="btn btn-primary">View Attendance</a>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+    </div>
+{% endblock %}
