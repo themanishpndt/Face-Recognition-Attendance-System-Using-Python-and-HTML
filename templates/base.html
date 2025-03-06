@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Face Recognition Attendance System{% endblock %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/animations.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <style>
+        :root[data-theme="light"] {
+            --bg-gradient: linear-gradient(135deg, #f0f8ff, #e6f7ff);
+            --navbar-bg: rgba(0, 123, 255, 0.1);
+            --text-color: #212529;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --border-color: rgba(255, 255, 255, 0.2);
+            --scrollbar-thumb: rgba(128, 128, 128, 0.3);
+            --scrollbar-track: transparent;
+        }
+
+        :root[data-theme="dark"] {
+            --bg-gradient: linear-gradient(135deg, #0f172a, #1e293b);
+            --navbar-bg: rgba(15, 23, 42, 0.95);
+            --text-color: #e2e8f0;
+            --card-bg: rgba(30, 41, 59, 0.95);
+            --border-color: rgba(148, 163, 184, 0.1);
+            --scrollbar-thumb: rgba(255, 255, 255, 0.2);
+            --scrollbar-track: transparent;
+            --hover-bg: rgba(51, 65, 85, 0.4);
+            --active-bg: rgba(71, 85, 105, 0.4);
+            --link-color: #60a5fa;
+            --link-hover-color: #93c5fd;
+            --shadow-color: rgba(0, 0, 0, 0.25);
+            --input-bg: rgba(30, 41, 59, 0.8);
+            --input-border: rgba(148, 163, 184, 0.2);
+            --input-focus-border: rgba(96, 165, 250, 0.5);
+            --btn-primary-bg: #2563eb;
+            --btn-primary-hover: #1d4ed8;
+            --btn-text: #ffffff;
+        }
+
+        html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            position: relative;
+            scrollbar-gutter: stable;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            flex-direction: column;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+            min-height: 100vh;
+            width: 100%;
+            margin: 0;
+            padding-right: calc(100vw - 100%);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0;
+            padding: 1rem;
+            box-sizing: border-box;
+        }
+
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        /* Basic scrollbar styling */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: #888 #f1f1f1;
+        }
+
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+            border: 2px solid #f1f1f1;
+        }
+
+        /* Dark theme scrollbar */
+        [data-theme="dark"] * {
+            scrollbar-color: #4a5568 #1a202c;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-track {
+            background: #1a202c;
+        }
+
+        [data-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: #4a5568;
+            border: 2px solid #1a202c;
+        }
+
+        .vector-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .vector-background canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100% !important;
+            height: 100% !important;
+        }
+
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            margin-bottom: 0.5rem;
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .card {
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            box-shadow: 0 4px 6px var(--shadow-color);
+        }
+
+        [data-theme="dark"] .card:hover {
+            box-shadow: 0 6px 12px var(--shadow-color);
+            transform: translateY(-2px);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle {
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background-color 0.3s;
+            margin-left: 1rem;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        [data-theme="dark"] .theme-toggle .fa-sun {
+            display: inline-block;
+        }
+
+        [data-theme="dark"] .theme-toggle .fa-moon {
+            display: none;
+        }
+
+        [data-theme="light"] .theme-toggle .fa-sun {
+            display: none;
+        }
+
+        [data-theme="light"] .theme-toggle .fa-moon {
+            display: inline-block;
+        }
+
+        .nav-link {
+            color: var(--text-color) !important;
+        }
+
+        [data-theme="dark"] .nav-link {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .nav-link:hover {
+            color: var(--link-hover-color);
+            background-color: var(--hover-bg);
+        }
+
+        [data-theme="dark"] .nav-link.active {
+            background-color: var(--active-bg);
+            color: var(--link-hover-color);
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+            color: #ffffff;
+        }
+
+        [data-theme="dark"] .btn-primary {
+            background-color: var(--btn-primary-bg);
+            border-color: var(--btn-primary-bg);
+            color: var(--btn-text);
+        }
+
+        [data-theme="dark"] .btn-primary:hover {
+            background-color: var(--btn-primary-hover);
+            border-color: var(--btn-primary-hover);
+        }
+
+        .form-control {
+            background-color: #ffffff;
+            border-color: #ced4da;
+            color: #495057;
+        }
+
+        [data-theme="dark"] .form-control {
+            background-color: var(--input-bg);
+            border-color: var(--input-border);
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .form-control:focus {
+            border-color: var(--input-focus-border);
+            box-shadow: 0 0 0 0.2rem rgba(96, 165, 250, 0.25);
+        }
+
+        .table {
+            color: #212529;
+        }
+
+        [data-theme="dark"] .table {
+            color: var(--text-color);
+        }
+
+        [data-theme="dark"] .table th,
+        [data-theme="dark"] .table td {
+            border-color: var(--border-color);
+        }
+
+        .alert {
+            background-color: #f8f9fa;
+            border-color: #ced4da;
+        }
+
+        [data-theme="dark"] .alert {
+            background-color: var(--card-bg);
+            border-color: var(--border-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="vector-background"></div>
+
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand animated-text" href="{{ url_for('home') }}">
+            <i class="fas fa-camera"></i> Face Recognition
+        </a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('home') }}">
+                        <i class="fas fa-home"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('capture') }}">
+                        <i class="fas fa-camera"></i> Capture
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('recognize') }}">
+                        <i class="fas fa-user-check"></i> Recognize
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('show_attendance') }}">
+                        <i class="fas fa-clock"></i> Attendance
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('manage_users') }}">
+                        <i class="fas fa-users"></i> Manage Users
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('settings') }}">
+                        <i class="fas fa-cog"></i> Settings
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{ url_for('export_attendance') }}">
+                        <i class="fas fa-file-export"></i> Export
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <div class="theme-toggle" onclick="toggleTheme()">
+                        <i class="fas fa-sun"></i>
+                        <i class="fas fa-moon"></i>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="content-wrapper">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            
+            <div class="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <script>
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+            
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+        }
+
+        // Set initial theme from localStorage or default to light
+        document.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        });
+
+        // Three.js background animation
+        function initThree() {
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ 
+                alpha: true,
+                antialias: true
+            });
+            
+            renderer.setPixelRatio(window.devicePixelRatio);
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.querySelector('.vector-background').appendChild(renderer.domElement);
+
+            const geometry = new THREE.BufferGeometry();
+            const vertices = [];
+            for (let i = 0; i < 2000; i++) {  
+                vertices.push(
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000),
+                    THREE.MathUtils.randFloatSpread(2000)
+                );
+            }
+            geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
+
+            const material = new THREE.PointsMaterial({ 
+                size: 2,
+                transparent: true,
+                opacity: 0.5,
+                color: document.documentElement.getAttribute('data-theme') === 'dark' ? 0x4444ff : 0x0066ff,
+                sizeAttenuation: true
+            });
+
+            const points = new THREE.Points(geometry, material);
+            scene.add(points);
+            camera.position.z = 1000;
+
+            let animationFrameId;
+            function animate() {
+                animationFrameId = requestAnimationFrame(animate);
+                points.rotation.x += 0.0001;  
+                points.rotation.y += 0.00005;
+                renderer.render(scene, camera);
+            }
+            animate();
+
+            // Cleanup function
+            window.addEventListener('beforeunload', () => {
+                cancelAnimationFrame(animationFrameId);
+                geometry.dispose();
+                material.dispose();
+                renderer.dispose();
+            });
+
+            // Handle window resize
+            window.addEventListener('resize', () => {
+                camera.aspect = window.innerWidth / window.innerHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+
+            // Update particle color when theme changes
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.attributeName === 'data-theme') {
+                        const theme = document.documentElement.getAttribute('data-theme');
+                        material.color.setHex(theme === 'dark' ? 0x4444ff : 0x0066ff);
+                    }
+                });
+            });
+
+            observer.observe(document.documentElement, {
+                attributes: true,
+                attributeFilter: ['data-theme']
+            });
+        }
+
+        initThree();
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+    </script>
+</body>
+</html>

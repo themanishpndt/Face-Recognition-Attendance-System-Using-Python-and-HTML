@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}Capture Faces{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0"><i class="fas fa-user-plus mr-2"></i>Register New User</h4>
+                </div>
+                <div class="card-body">
+                    <form action="{{ url_for('capture') }}" method="post" class="needs-validation" novalidate>
+                        <div class="form-group">
+                            <label for="name"><i class="fas fa-user mr-2"></i>Full Name</label>
+                            <input type="text" class="form-control" id="name" name="name" required 
+                                   placeholder="Enter full name (e.g., John Smith)"
+                                   pattern="[A-Za-z]+(\s[A-Za-z]+)*"
+                                   title="Please use only alphabets with optional spaces between names. Example: John Smith">
+                            <div class="invalid-feedback">
+                                Please provide a valid name using only alphabets and spaces between names.
+                            </div>
+                            <small class="form-text text-muted">
+                                <i class="fas fa-info-circle"></i> Name Requirements:
+                                <ul class="mt-2">
+                                    <li>Use only alphabetic characters (A-Z, a-z) and spaces</li>
+                                    <li>Spaces allowed between first name and last name</li>
+                                    <li>No numbers or special characters</li>
+                                    <li>Examples: John Smith, Mary Jane Wilson</li>
+                                </ul>
+                            </small>
+                        </div>
+                        
+                        <div class="alert alert-info" role="alert">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Important:</strong> The system will capture 100 images of your face. Please:
+                            <ul class="mb-0 mt-2">
+                                <li>Ensure good lighting conditions</li>
+                                <li>Look directly at the camera</li>
+                                <li>Keep your face clearly visible</li>
+                                <li>Stay still during capture</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="fas fa-camera mr-2"></i>Start Capture
+                            </button>
+                            <a href="{{ url_for('home') }}" class="btn btn-secondary btn-lg ml-2">
+                                <i class="fas fa-arrow-left mr-2"></i>Back
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} mt-4" role="alert">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-circle' }} mr-2"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+    </div>
+</div>
+
+<script>
+// Form validation
+(function() {
+    'use strict';
+    window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+            form.addEventListener('submit', function(event) {
+                if (form.checkValidity() === false) {
+                    event.preventDefault();
+                    event.stopPropagation();
+                }
+                form.classList.add('was-validated');
+            }, false);
+        });
+    }, false);
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+
+{% block title %}Instructions{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <h1 class="display-4 mb-4 text-center">How to Use Smart Attendance</h1>
+            
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h3 class="mb-0"><i class="fas fa-info-circle mr-2"></i>Important Rules</h3>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-warning">
+                        <strong>Name Requirements:</strong>
+                        <ul>
+                            <li>Use only alphabetic characters (A-Z, a-z) and spaces</li>
+                            <li>Spaces are allowed between first name and last name</li>
+                            <li>No numbers or special characters allowed</li>
+                            <li>Example valid names: John Smith, Mary Jane Wilson</li>
+                            <li>Example invalid names: John123, Tom@Work</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-success text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-plus mr-2"></i>Step 1: Register New User</h3>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Click on "Capture Face" button on the home page</li>
+                        <li>Enter your name using only alphabets and spaces</li>
+                        <li>Look directly at the camera</li>
+                        <li>Stay still while your face is being captured</li>
+                        <li>Wait for the confirmation message</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h3 class="mb-0"><i class="fas fa-user-check mr-2"></i>Step 2: Take Attendance</h3>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Click on "Start Recognition" button</li>
+                        <li>Stand in front of the camera</li>
+                        <li>Ensure good lighting conditions</li>
+                        <li>Your attendance will be marked automatically</li>
+                        <li>Wait for the confirmation message</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="card mb-4">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="mb-0"><i class="fas fa-table mr-2"></i>Step 3: View Records</h3>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li>Click on "View Attendance" button</li>
+                        <li>View attendance records for the current date</li>
+                        <li>Records show name and timestamp of attendance</li>
+                    </ol>
+                </div>
+            </div>
+
+            <div class="text-center mt-4">
+                <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg">
+                    <i class="fas fa-home mr-2"></i>Return to Home
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

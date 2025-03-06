@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Settings</h2>
+    <form method="POST" action="{{ url_for('settings') }}">
+        <div class="mb-3">
+            <label for="camera_index" class="form-label">Camera Index</label>
+            <input type="number" class="form-control" id="camera_index" name="camera_index"
+                   value="{{ settings.camera_index }}" min="0">
+            <small class="text-muted">Select which camera to use (0 for default)</small>
+        </div>
+        
+        <div class="mb-3">
+            <label for="required_samples" class="form-label">Required Face Samples</label>
+            <input type="number" class="form-control" id="required_samples" name="required_samples"
+                   value="{{ settings.required_samples }}" min="10" max="100">
+            <small class="text-muted">Number of face samples to collect during registration (10-100)</small>
+        </div>
+        
+        <div class="mb-3">
+            <label for="attendance_threshold" class="form-label">Recognition Threshold</label>
+            <input type="number" class="form-control" id="attendance_threshold" name="attendance_threshold"
+                   value="{{ settings.attendance_threshold }}" min="0.1" max="1.0" step="0.1">
+            <small class="text-muted">Face recognition confidence threshold (0.1-1.0)</small>
+        </div>
+        
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+        <a href="{{ url_for('home') }}" class="btn btn-secondary">Back to Home</a>
+    </form>
+</div>
+{% endblock %}
